@@ -6,8 +6,8 @@ function patch-ubuntu() {
 
     CPIO_SRC=$(pwd)/kernel/firmware/acpi/
 
-    mkdir -p $SRC
-    cd $SRC
+    mkdir -p ${SRC}
+    cd ${SRC}
     sudo cat /sys/firmware/acpi/tables/SSDT4 > SSDT4.aml
 
 

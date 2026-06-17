@@ -10,8 +10,8 @@ function patch-fedora() {
     DST=/usr/local/etc/acpi-overrides
 
     # Create a temporary directory to store the ACPI tables and the patch.
-    mkdir -p $SRC
-    cd $SRC
+    mkdir -p ${SRC}
+    cd ${SRC}
     sudo cat /sys/firmware/acpi/tables/SSDT4 > SSDT4.aml
 
     # Create a patch file to modify the ACPI table.
@@ -56,39 +56,39 @@ function patch-fedora() {
     CONTAINER=patch-container
 
     # Create a temporary container to apply the patch.
-    echo "Creating temporary container $CONTAINER..."
-    toolbox create -c $CONTAINER -y
+    echo "Creating temporary container ${CONTAINER}..."
+    toolbox create -c ${CONTAINER} -y
 
     # Update DNF cache inside the container.
-    toolbox run -c $CONTAINER -- sudo dnf makecache
+    toolbox run -c ${CONTAINER} -- sudo dnf makecache
 
     # Install package inside container to handle the ACPI tables.
-    echo "Installing acpica-tools and patch inside container $CONTAINER..."
-    toolbox run -c $CONTAINER -- sudo dnf install -y acpica-tools patch
+    echo "Installing acpica-tools and patch inside container ${CONTAINER}..."
+    toolbox run -c ${CONTAINER} -- sudo dnf install -y acpica-tools patch
 
     # Disassemble the ACPI table to a human-readable format, inside container.
-    echo "Disassembling the ACPI table inside container $CONTAINER..."
-    toolbox run -c $CONTAINER -- iasl -d SSDT4.aml
+    echo "Disassembling the ACPI table inside container ${CONTAINER}..."
+    toolbox run -c ${CONTAINER} -- iasl -d SSDT4.aml
 
     # Apply the patch to the disassembled ACPI table, inside container.
-    echo "Applying the patch inside container $CONTAINER..."
-    toolbox run -c $CONTAINER -- patch < fujitsu-vdd.patch
+    echo "Applying the patch inside container ${CONTAINER}..."
+    toolbox run -c ${CONTAINER} -- patch < fujitsu-vdd.patch
 
     # If patch fail, exit the shell function.
     if [ $? -ne 0 ]; then
         echo "Failed to apply the patch. Remove the temporaly container and exit."
         # Remove the temporary container before exiting.
-        toolbox rm $CONTAINER -y
+        toolbox rm ${CONTAINER} -y
         return 1
     fi
 
     # Reassemble the patched ACPI table back to binary format, inside container.
-    echo "Reassembling the patched ACPI table inside container $CONTAINER..."
-    toolbox run -c $CONTAINER -- iasl -sa SSDT4.dsl
+    echo "Reassembling the patched ACPI table inside container ${CONTAINER}..."
+    toolbox run -c ${CONTAINER} -- iasl -sa SSDT4.dsl
 
     # Remove the temporary container after patching.
-    echo "Removing temporary container $CONTAINER..."
-    toolbox rm $CONTAINER -y
+    echo "Removing temporary container ${CONTAINER}..."
+    toolbox rm ${CONTAINER} -y
 
     # Copy the patched ACPI table to the destination directory.
     if [ -d /run/ostree-booted ]; then
@@ -98,16 +98,16 @@ function patch-fedora() {
         # Fedora Workstation / Spin 用の処理
         DST=/usr/local/etc/acpi-overrides
     fi
-    echo "Copying the patched ACPI table to $DST..."
-    sudo mkdir -p $DST
-    sudo cp $HOME/acpi/SSDT4.aml $DST
+    echo "Copying the patched ACPI table to ${DST}..."
+    sudo mkdir -p ${DST}
+sudo cp ${SRC}/SSDT4.aml ${DST}
 
 
     # Deploy the patched ACPI table by creating a dracut configuration file to load the patched table at boot time.
     echo "Creating dracut configuration file /etc/dracut.conf.d/99-acpi-override.conf..."
     cat <<-EOF | sudo tee /etc/dracut.conf.d/99-acpi-override.conf
     acpi_override="yes"
-    acpi_table_dir="$DST"
+    acpi_table_dir="${DST}"
 EOF
 
     # Regenerate the initramfs to include the patched ACPI table.

@@ -78,7 +78,7 @@ function patch-fedora() {
     if [ $? -ne 0 ]; then
         echo "Failed to apply the patch. Remove the temporaly container and exit."
         # Remove the temporary container before exiting.
-        toolbox rm -c $CONTAINER -y
+        toolbox rm $CONTAINER -y
         return 1
     fi
 

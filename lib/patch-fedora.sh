@@ -91,7 +91,7 @@ function patch-fedora() {
     toolbox rm ${CONTAINER} -f
 
     # Copy the patched ACPI table to the destination directory.
-    if [ -d /run/ostree-booted ]; then
+    if [ -e /run/ostree-booted ]; then
         # Fedora Atomic Desktop (Kinoite, Silverblue, etc.) 用の処理
         DST=/etc/acpi-overrides
     else
@@ -112,7 +112,7 @@ EOF
 
     # Regenerate the initramfs to include the patched ACPI table.
     echo "Regenerating the initramfs to include the patched ACPI table..."
-    if [ -d /run/ostree-booted ]; then
+    if [ -e /run/ostree-booted ]; then
         # Fedora Atomic Desktop (Kinoite, Silverblue, etc.) 用の処理
         sudo rpm-ostree initramfs --enable
 

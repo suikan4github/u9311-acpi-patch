@@ -6,11 +6,11 @@ The newest version of this software can be found at [GitHub](https://github.com/
 ## Details
 This software applies an ACPI patch to the Fujitsu FMV Lifebook U9311 to fix the screen blackout issue when the device is resumed from the suspend state. 
 
-This problem is caused by the wrong handling of the LCD display in the ACPI tables, which leads to the display not being properly re-initialized after resuming from suspend.
+The root cause of this issue is the wrong handling of the LCD display in the ACPI tables of the firmware, which leads to the display not being properly re-initialized after resuming from suspend.
 
-This problem and workaround is explained in the [Fujitsu LIFEBOOK U9311](https://wiki.archlinux.org/title/Fujitsu_Lifebook_U9311) page in the Arch Linux Wiki.
+This problem and workaround are explained in the [Fujitsu LIFEBOOK U9311](https://wiki.archlinux.org/title/Fujitsu_Lifebook_U9311) page of the Arch Linux Wiki.
 
-The script in this repository is based on the workaround described in the Arch Linux Wiki.
+The scripts in this repository are based on the workaround described in the Arch Linux Wiki.
 
 ## Supported Distributions
 - Fedora Workstation
@@ -18,10 +18,10 @@ The script in this repository is based on the workaround described in the Arch L
 - Ubuntu Desktop
 
 ### Tested Versions and Hardware
-| Distribution      | Version |
-|-------------      | ------- |
-| Fedora KDE Plasma | 44 |
-| Fedora Kinoite    | 44 |
+| Distribution      | Version   | Result |
+|-------------      | -------   |--------|
+| Fedora KDE Plasma | 44        |  OK    |
+| Fedora Kinoite    | 44        |  OK    |
 | Ubuntu            | 25.10     |
 | Ubuntu            | 26.04 LTS |
 

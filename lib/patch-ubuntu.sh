@@ -13,42 +13,42 @@ function patch-ubuntu() {
 
     # Create a patch file to modify the ACPI table.
     echo "Creating patch file fujitsu-vdd.patch..."
-    cat <<EOF | sed 's/^    //' | tee fujitsu-vdd.patch
-    --- SSDT4.dsl.orig    2024-07-29 18:33:14.782373152 +0200
-    +++ SSDT4.dsl 2024-07-29 18:38:33.021477685 +0200
-    @@ -18,7 +18,7 @@
-    *     Compiler ID      "INTL"
-    *     Compiler Version 0x20160422 (538313762)
-    */
-    -DefinitionBlock ("", "SSDT", 2, "INTEL ", "IgfxSsdt", 0x00003000)
-    +DefinitionBlock ("", "SSDT", 2, "INTEL ", "IgfxSsdt", 0x00003001)  
-    {
-        External (_SB_.PC00, DeviceObj)
-        External (_SB_.PC00.GFX0, DeviceObj)
-    @@ -115,11 +115,6 @@
-            {
-                If ((PDRD () == Zero))
-                {
-    -                If ((VDDE == One))
-    -                {
-    -                    VDDE = Zero
-    -                    Sleep (0x01F4)
-    -                }
-                }
-    
-                NDID = 0x02
-    @@ -2479,11 +2474,6 @@
-                {
-                    If ((PDRD () == Zero))
-                    {
-    -                    If ((VDDE == One))
-    -                    {
-    -                        VDDE = Zero
-    -                        Sleep (0x01F4)
-    -                    }
-                    }
-                }
-EOF
+    cat <<-EOF | tee fujitsu-vdd.patch
+	--- SSDT4.dsl.orig    2024-07-29 18:33:14.782373152 +0200
+	+++ SSDT4.dsl 2024-07-29 18:38:33.021477685 +0200
+	@@ -18,7 +18,7 @@
+	  *     Compiler ID      "INTL"
+	  *     Compiler Version 0x20160422 (538313762)
+	  */
+	-DefinitionBlock ("", "SSDT", 2, "INTEL ", "IgfxSsdt", 0x00003000)
+	+DefinitionBlock ("", "SSDT", 2, "INTEL ", "IgfxSsdt", 0x00003001)  
+	 {
+	     External (_SB_.PC00, DeviceObj)
+	     External (_SB_.PC00.GFX0, DeviceObj)
+	@@ -115,11 +115,6 @@
+	         {
+	             If ((PDRD () == Zero))
+	             {
+	-                If ((VDDE == One))
+	-                {
+	-                    VDDE = Zero
+	-                    Sleep (0x01F4)
+	-                }
+	             }
+	 
+	             NDID = 0x02
+	@@ -2479,11 +2474,6 @@
+	             {
+	                 If ((PDRD () == Zero))
+	                 {
+	-                    If ((VDDE == One))
+	-                    {
+	-                        VDDE = Zero
+	-                        Sleep (0x01F4)
+	-                    }
+	                 }
+	             }
+	EOF
 
     # Install required packages for patching.
     echo "Installing required packages for patching..."

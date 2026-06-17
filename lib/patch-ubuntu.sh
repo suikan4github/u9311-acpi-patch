@@ -13,7 +13,7 @@ function patch-ubuntu() {
 
     # Create a patch file to modify the ACPI table.
     echo "Creating patch file fujitsu-vdd.patch..."
-    cat <<- EOF | tee fujitsu-vdd.patch
+    cat <<EOF | sed 's/^    //' | tee fujitsu-vdd.patch
     --- SSDT4.dsl.orig    2024-07-29 18:33:14.782373152 +0200
     +++ SSDT4.dsl 2024-07-29 18:38:33.021477685 +0200
     @@ -18,7 +18,7 @@

@@ -88,7 +88,7 @@ function patch-fedora() {
 
     # Remove the temporary container after patching.
     echo "Removing temporary container $CONTAINER..."
-    toolbox rm -c $CONTAINER -y
+    toolbox rm $CONTAINER -y
 
     # Copy the patched ACPI table to the destination directory.
     if [ -d /run/ostree-booted ]; then

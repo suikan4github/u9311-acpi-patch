@@ -1,3 +1,7 @@
+#!/bin/bash
+
+# shell function to patch the ACPI tables on a Fujitsu U9311 laptop to fix the VDD issue.
+# This function must work on both Fedora Workstation and Fedora Atomic desktop system. 
 function patch-ubuntu() {
     echo "For Ubuntu."
 
@@ -7,7 +11,8 @@ function patch-ubuntu() {
     CPIO_SRC=$(pwd)/kernel/firmware/acpi/
 
     mkdir -p ${SRC}
-    cd ${SRC}
+    cd ${SRC} || exit 1
+    # shellcheck disable=SC2024
     sudo cat /sys/firmware/acpi/tables/SSDT4 > SSDT4.aml
 
 
@@ -82,7 +87,7 @@ function patch-ubuntu() {
 
     # Generate CPIO archive 
     echo "Generating CPIO archive..."
-    cd ${SRC}
+    cd ${SRC} || exit 1
     find kernel | cpio -H newc -o > ./acpi_override.cpio
 
     # Deploy the CPIO file.

@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # shell function to patch the ACPI tables on a Fujitsu U9311 laptop to fix the VDD issue.
 # This function must work on both Fedora Workstation and Fedora Atomic desktop system. 
 function patch-fedora() {
@@ -11,7 +13,8 @@ function patch-fedora() {
 
     # Create a temporary directory to store the ACPI tables and the patch.
     mkdir -p ${SRC}
-    cd ${SRC}
+    cd ${SRC} || exit 1
+    # shellcheck disable=SC2024
     sudo cat /sys/firmware/acpi/tables/SSDT4 > SSDT4.aml
 
     # Create a patch file to modify the ACPI table.

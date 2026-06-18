@@ -38,6 +38,20 @@ Run the following command to apply the ACPI patch:
 ```
 If the ACPI table has mismatch with the patch, script will terminate the process and exit with error. In this case, system will be untouched. 
 
+Reboot the system after running the script to apply the patch.
+
+## Confirm the patch is applied
+After rebooting, run the following command to check the kernel log for the message indicating that the ACPI patch has been applied:
+
+```sh
+journalctl -k | grep -i "Table Upgrade"
+```
+You will see the following message in the log if the patch is applied successfully.
+
+```
+Feb 27 15:51:28 fedora kernel: ACPI: Table Upgrade: override [SSDT-INTEL -IgfxSsdt]
+```
+
 ## Removing the patch
 
 To remove the patch, Run the following commands:
@@ -51,25 +65,28 @@ else
 fi
 
 if [ "$ID" = "ubuntu" ] || [ "$ID_LIKE" = "*ubuntu*" ]; then
-    echo "Detected Ubuntu"
-    # Ubuntu: remove the GRUB line
+    # Ubuntu: remove the GRUB configuration
+    echo "[Ubuntu] Removing ACPI patch from GRUB configuration..."
+    TARGET='GRUB_EARLY_INITRD_LINUX_CUSTOM="acpi_override.cpio"'
     sudo cp /etc/default/grub /etc/default/grub.bak && \
-    awk '!($0 == "GRUB_EARLY_INITRD_LINUX_CUSTOM=\"acpi_override.cpio\"")' /etc/default/grub.bak | sudo tee /etc/default/grub
-
+    awk -v TARGET="$TARGET" '$0 != TARGET' /etc/default/grub.bak |\
+        sudo tee /etc/default/grub
+    # Update GRUB configuration
     sudo update-grub
-
-
 elif [ "$ID" = "fedora" ] || [ "$ID_LIKE" = "*fedora*" ]; then
-    echo "Detected Fedora"
     # Fedora: remove the dracut config
-    sudo mv /etc/dracut.conf.d/99-acpi-override.conf /etc/dracut.conf.d/99-acpi-override.conf.bak
+    sudo mv /etc/dracut.conf.d/99-acpi-override.conf\
+         /etc/dracut.conf.d/99-acpi-override.conf.bak
     if [ -e /run/ostree-booted ]; then
-        echo "[fedora] Detected Fedora Atomic Desktop. Regenerating the initramfs using rpm-ostree..."
+        # Fedora Workstation / Spin 
+        echo "[fedora] Detected Fedora Atomic Desktop."
+        echo "[fedora] Rebuilding initramfs..."
         sudo rpm-ostree initramfs --disable
         sudo rpm-ostree initramfs --enable
     else
         # Fedora Workstation / Spin 
-        echo "[fedora] Detected Fedora Workstation / Spin. Regenerating the initramfs using dracut..."
+        echo "[fedora] Detected Fedora Workstation / Spin."
+        echo "[fedora] Rebuilding initramfs..."
         sudo dracut --force --verbose
     fi
 
@@ -81,13 +98,10 @@ fi
 ```
 Above commands will remove the configuration to read the ACPI Patch. After rebooting, system will be back to the original state without ACPI patch.
 
+Tested on :
+- Fedora 44 KDE Plasma
+- Kubuntu 26.04 LTS
 
-
-
-### Ubuntu
-Run the following commands : 
-```sh
-```
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

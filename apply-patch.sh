@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Include the patch functions from the lib directory.
 . ./lib/patch-fedora.sh

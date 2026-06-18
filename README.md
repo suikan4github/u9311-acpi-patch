@@ -22,6 +22,7 @@ As of 2026/Jun/18.
 
 | Distribution      | Version   | Result |
 |-------------      | -------   |--------|
+| Fedora KDE Plasma | 43        |  OK    |
 | Fedora KDE Plasma | 44        |  OK    |
 | Fedora Kinoite    | 44        |  OK    |
 | Ubuntu            | 25.10     |  OK    |

@@ -29,12 +29,12 @@ As of 2026/Jun/18.
 | Ubuntu            | 26.04 LTS |  OK    |
 
 Hardware : 
-- Fujitsu LIFEBOOK WU-X/E3 Intel Core i5 1135G7 ( Equivalent model to LIFEBOOK U9311 ).
+- Fujitsu LIFEBOOK U9311FX Intel Core i5 1135G7.
 
 ## Usage
 Run the following command to apply the ACPI patch:
 ```sh
-./apply-patch.sh
+./u9311-acpi-patch.sh
 ```
 If the ACPI table has mismatch with the patch, script will terminate the process and exit with error. In this case, system will be untouched. 
 

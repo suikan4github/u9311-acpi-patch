@@ -30,6 +30,7 @@ As of 2026/Jun/18.
 
 Hardware : 
 - Fujitsu LIFEBOOK U9311FX Intel Core i5 1135G7.
+  - BIOS: 2.54 (2025/06/06)
 
 ## Usage
 Run the following command to apply the ACPI patch:

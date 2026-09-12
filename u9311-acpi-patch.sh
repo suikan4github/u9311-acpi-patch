@@ -4,22 +4,29 @@
 . ./lib/patch-fedora.sh
 . ./lib/patch-ubuntu.sh
 
-# Validate the vender. 
-# Check the hostnamectl command and make sure the "Hadware Vendor" field contains "FUJITSU".
-if ! hostnamectl | grep -q "Hardware Vendor: FUJITSU"; then
-    echo "This script is only for Fujitsu laptops. Exiting."
-    exit 1
-fi  
+main() {
+    # Validate the vender. 
+    # Check the hostnamectl command and make sure the "Hadware Vendor" field contains "FUJITSU".
+    if ! hostnamectl | grep -q "Hardware Vendor: FUJITSU"; then
+        echo "This script is only for Fujitsu laptops. Exiting."
+        return 1
+    fi  
 
 
-# Check if it is Fedora Workstation or Fedora Silverblue.
-if [ -f /etc/fedora-release ]; then
-    patch-fedora
-# Elese if it is Ubuntu.
-elif [ -f /etc/lsb-release ]; then
-    patch-ubuntu
-else
-    echo "Unsupported Linux distribution. Exiting."
-    exit 1
-fi
+    # Check if it is Fedora Workstation or Fedora Silverblue.
+    if [ -f /etc/fedora-release ]; then
+    #    patch-fedora
+        echo !!! To patch Fedora, visit following repository: !!!
+        echo !!! https://github.com/suikan4github/nb2033u-libfprint-fedora !!!
+        return 1
+    # Elese if it is Ubuntu.
+    elif [ -f /etc/lsb-release ]; then
+        patch-ubuntu
+    else
+        echo "Unsupported Linux distribution. Exiting."
+        return 1
+    fi
+}
+
+main "$@"
 

@@ -1,7 +1,11 @@
 # Fujitsu FMV Lifebook U9311 ACPI Patch for Linux
-Applying ACPI Patch for Fujitsu FMV Lifebook U9311 for Linux.
+Applying ACPI Patch for Fujitsu FMV Lifebook U9311 for Ubuntu.
 
 The newest version of this software can be found at [GitHub](https://github.com/suikan4github/u9311-acpi-patch).
+
+:::message
+This patch is specifically designed for Ubuntu distributions. Users of Fedora Workstation and Fedora Atomic Desktop should refer to the [Fedora-specific repository](https://github.com/suikan4github/nb2033u-libfprint-fedora) for instructions.
+:::
 
 ## Details
 This software applies an ACPI patch to the Fujitsu FMV Lifebook U9311 to fix the screen blackout issue when the device is resumed from the suspend state. 
@@ -13,8 +17,6 @@ This problem and workaround are explained in the [Fujitsu LIFEBOOK U9311](https:
 The scripts in this repository are based on the workaround described in the Arch Linux Wiki.
 
 ## Supported Distributions
-- Fedora Workstation
-- Fedora Atomic Desktop
 - Ubuntu Desktop
 
 ### Tested Versions and Hardware
@@ -22,9 +24,6 @@ As of 2026/Jun/18.
 
 | Distribution      | Version   | Result |
 |-------------      | -------   |--------|
-| Fedora KDE Plasma | 43        |  OK    |
-| Fedora KDE Plasma | 44        |  OK    |
-| Fedora Kinoite    | 44        |  OK    |
 | Ubuntu            | 25.10     |  OK    |
 | Ubuntu            | 26.04 LTS |  OK    |
 
@@ -58,44 +57,35 @@ Feb 27 15:51:28 fedora kernel: ACPI: Table Upgrade: override [SSDT-INTEL -IgfxSs
 To remove the patch, Run the following commands:
 
 ```sh
-if [ -f /etc/os-release ]; then
-    . /etc/os-release
-else
-    echo "Cannot detect OS" >&2
-    exit 1
-fi
-
-if [ "$ID" = "ubuntu" ] || [ "$ID_LIKE" = "*ubuntu*" ]; then
-    # Ubuntu: remove the GRUB configuration
-    echo "[Ubuntu] Removing ACPI patch from GRUB configuration..."
-    TARGET='GRUB_EARLY_INITRD_LINUX_CUSTOM="acpi_override.cpio"'
-    sudo cp /etc/default/grub /etc/default/grub.bak && \
-    awk -v TARGET="$TARGET" '$0 != TARGET' /etc/default/grub.bak |\
-        sudo tee /etc/default/grub
-    # Update GRUB configuration
-    sudo update-grub
-elif [ "$ID" = "fedora" ] || [ "$ID_LIKE" = "*fedora*" ]; then
-    # Fedora: remove the dracut config
-    sudo mv /etc/dracut.conf.d/99-acpi-override.conf\
-         /etc/dracut.conf.d/99-acpi-override.conf.bak
-    if [ -e /run/ostree-booted ]; then
-        # Fedora Workstation / Spin 
-        echo "[fedora] Detected Fedora Atomic Desktop."
-        echo "[fedora] Rebuilding initramfs..."
-        sudo rpm-ostree initramfs --disable
-        sudo rpm-ostree initramfs --enable
+remove_patch() {
+    if [ -f /etc/os-release ]; then
+        . /etc/os-release
     else
-        # Fedora Workstation / Spin 
-        echo "[fedora] Detected Fedora Workstation / Spin."
-        echo "[fedora] Rebuilding initramfs..."
-        sudo dracut --force --verbose
+        echo "Cannot detect OS" >&2
+        return 1
     fi
 
-else
-    echo "Unsupported distro: $ID" >&2
-    exit 1
-fi
-
+    if [ "$ID" = "ubuntu" ] || [ "$ID_LIKE" = "*ubuntu*" ]; then
+        # Ubuntu: remove the GRUB configuration
+        echo "[Ubuntu] Removing ACPI patch from GRUB configuration..."
+        TARGET='GRUB_EARLY_INITRD_LINUX_CUSTOM="acpi_override.cpio"'
+        sudo cp /etc/default/grub /etc/default/grub.bak && \
+        awk -v TARGET="$TARGET" '$0 != TARGET' /etc/default/grub.bak |\
+            sudo tee /etc/default/grub
+        # Update GRUB configuration
+        sudo update-grub
+    elif [ "$ID" = "fedora" ] || [ "$ID_LIKE" = "*fedora*" ]; then
+        # Fedora: remove the dracut config
+        echo !!! To remove the ACPI patch on Fedora, !!!
+        echo !!! please follow the instructions in the Fedora-specific repository: !!!
+        echo !!! https://github.com/suikan4github/nb2033u-libfprint-fedora !!!
+        return 1
+    else
+        echo "Unsupported distro: $ID" >&2
+        return 1
+    fi
+}
+remove_patch
 ```
 Above commands will remove the configuration to read the ACPI Patch. After rebooting, system will be back to the original state without ACPI patch.
 

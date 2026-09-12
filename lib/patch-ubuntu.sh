@@ -11,7 +11,7 @@ function patch-ubuntu() {
     CPIO_SRC=$(pwd)/kernel/firmware/acpi/
 
     mkdir -p ${SRC}
-    cd ${SRC} || exit 1
+    cd ${SRC} || return 1
     # shellcheck disable=SC2024
     sudo cat /sys/firmware/acpi/tables/SSDT4 > SSDT4.aml
 
@@ -89,7 +89,7 @@ function patch-ubuntu() {
 
     # Back to the original directory.
     echo "[patch-ubuntu] Back to the original directory..."
-    cd - || exit 1
+    cd - || return 1
 
     # Create a working directory.
     mkdir -p ${CPIO_SRC}

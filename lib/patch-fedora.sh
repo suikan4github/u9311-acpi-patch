@@ -13,7 +13,7 @@ function patch-fedora() {
 
     # Create a temporary directory to store the ACPI tables and the patch.
     mkdir -p ${SRC}
-    cd ${SRC} || exit 1
+    cd ${SRC} || return 1
     # shellcheck disable=SC2024
     sudo cat /sys/firmware/acpi/tables/SSDT4 > SSDT4.aml
 
